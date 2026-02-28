@@ -35,6 +35,15 @@
         button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
         #btn-spin { background: #f1c40f; color: #000; }
         #btn-auto { background: #e94560; color: #fff; }
+        
+        /* Game Over Alert */
+        #game-over-message {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: rgba(0, 0, 0, 0.95); color: #ff4444; padding: 30px; border-radius: 20px;
+            border: 5px solid #ff4444; text-align: center; z-index: 100; pointer-events: none;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 80%;
+        }
+        #game-over-message.show { transform: translate(-50%, -50%) scale(1); }
     </style>
 </head>
 <body>
@@ -45,6 +54,12 @@
         <div id="win-overlay">
             <h1 id="win-title">BIG WIN!</h1>
             <div style="font-size: 30px; font-weight: bold;" id="win-amount">0</div>
+        </div>
+
+        <div id="game-over-message">
+            <h1 id="game-over-title">GAME OVER!</h1>
+            <div style="font-size: 18px;">Saldo Habis</div>
+            <button onclick="resetGame()" style="margin-top: 15px; background: #f1c40f; color: #000;">MAIN LAGI</button>
         </div>
 
         <div class="stats">
@@ -70,11 +85,12 @@
     const multis = [2, 5, 10, 50, 100];
     const ROWS = 5;
     const COLS = 6;
-    let balance = 10000;
+    const INITIAL_BALANCE = 10000;
+    let balance = INITIAL_BALANCE;
     let spinCounter = 0;
     let isSpinning = false;
     let isAuto = false;
-    let gridData = Array(ROWS * COLS).fill('❓');
+    let gridData = Array(ROWS * COLS).fill(null);
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -98,10 +114,33 @@
         const titleEl = document.getElementById('win-title');
         
         amountEl.innerText = amount;
-        titleEl.innerText = amount > 5000 ? "SENSATIONAL!" : "BIG WIN!";
+        titleEl.innerText = amount > 5000 ? "SENSATIONAL! 🎆" : "BIG WIN!";
         overlay.classList.add('show');
         
         setTimeout(() => { overlay.classList.remove('show'); }, 3000);
+    }
+
+    function showGameOverMessage() {
+        const message = document.getElementById('game-over-message');
+        message.classList.add('show');
+        isAuto = false;
+        document.getElementById('btn-auto').innerText = "AUTO: OFF";
+    }
+
+    function resetGame() {
+        balance = INITIAL_BALANCE;
+        spinCounter = 0;
+        isSpinning = false;
+        isAuto = false;
+        gridData = Array(ROWS * COLS).fill(null);
+        
+        document.getElementById('balance').innerText = balance;
+        document.getElementById('spin-count').innerText = spinCounter;
+        document.getElementById('total-win').innerText = '0';
+        document.getElementById('btn-auto').innerText = "AUTO: OFF";
+        document.getElementById('game-over-message').classList.remove('show');
+        
+        renderGrid();
     }
 
     function renderGrid(animatingIndices = []) {
@@ -118,7 +157,14 @@
     }
 
     async function handleSpin() {
-        if (isSpinning || balance < 200) return;
+        if (isSpinning) return;
+        
+        if (balance < 200) {
+            playSound(200, 'sine', 0.5);
+            showGameOverMessage();
+            return;
+        }
+        
         if (audioCtx.state === 'suspended') audioCtx.resume();
         
         isSpinning = true;
@@ -146,7 +192,15 @@
         await processTumbles();
 
         isSpinning = false;
-        if (isAuto) setTimeout(handleSpin, 1500);
+        
+        // Auto spin dengan pengecekan balance
+        if (isAuto) {
+            if (balance >= 200) {
+                setTimeout(handleSpin, 1500);
+            } else {
+                showGameOverMessage();
+            }
+        }
     }
 
     function generateSymbol() {
@@ -221,6 +275,10 @@
     }
 
     function toggleAuto() {
+        if (balance < 200) {
+            playSound(200, 'sine', 0.3);
+            return;
+        }
         isAuto = !isAuto;
         document.getElementById('btn-auto').innerText = isAuto ? "AUTO: ON" : "AUTO: OFF";
         if (isAuto && !isSpinning) handleSpin();
