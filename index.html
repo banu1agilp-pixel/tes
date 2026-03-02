@@ -1,22 +1,120 @@
-const symbols = [
-    '5254162027095660865_playGallery_logo_ID-1451717022saveToAlbum.jpg',
-    '5254162027095660865_playGallery_logo_ID-1957275647saveToAlbum.jpg',
-    '5254162027095660865_playGallery_logo_ID-1302137012saveToAlbum.jpg',
-    '5254162027095660865_playGallery_logo_ID-946158397saveToAlbum.jpg',
-    '5254162027095660865_playGallery_logo_ID-1433468890saveToAlbum.jpg',
-    '5254162027095660865_playGallery_logo_ID-1288864432saveToAlbum.jpg',
-    '5254162027095660865_playGallery_logo_ID1248466278saveToAlbum.jpg'
-];
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Foto Estetik Banu</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-function renderGrid() {
-    const gridContainer = document.getElementById('grid-container');
-    gridContainer.innerHTML = '';
-    symbols.forEach((symbol) => {
-        const imgElement = document.createElement('img');
-        imgElement.src = symbol;
-        imgElement.alt = 'Anime Girl';
-        imgElement.style.width = '100px'; // Set desired width
-        imgElement.style.height = 'auto'; // Maintain aspect ratio
-        gridContainer.appendChild(imgElement);
-    });
-}
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+        }
+
+        .gallery-item {
+            background-color: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-item .desc {
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+        }
+
+        @media (min-width: 900px) {
+            .gallery-item:first-child {
+                grid-column: span 2;
+                grid-row: span 2;
+            }
+            .gallery-item:first-child img {
+                height: 620px;
+            }
+            .gallery-item:nth-child(7) {
+                grid-column: span 2;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Koleksi Gambar Anime Banu</h1>
+
+    <div class="gallery-container">
+        <div class="gallery-item">
+            <img src="5254162027095660865_playGallery_logo_ID-1451717022saveToAlbum.jpg" alt="Anime Character 1">
+            <div class="desc">Karakter 1</div>
+        </div>
+
+        <div class="gallery-item">
+            <img src="5254162027095660865_playGallery_logo_ID-1957275647saveToAlbum.jpg" alt="Anime Character 2">
+            <div class="desc">Karakter 2</div>
+        </div>
+
+        <div class="gallery-item">
+            <img src="5254162027095660865_playGallery_logo_ID-1302137012saveToAlbum.jpg" alt="Anime Character 3">
+            <div class="desc">Karakter 3</div>
+        </div>
+
+        <div class="gallery-item">
+            <img src="5254162027095660865_playGallery_logo_ID-946158397saveToAlbum.jpg" alt="Anime Character 4">
+            <div class="desc">Karakter 4</div>
+        </div>
+
+        <div class="gallery-item">
+            <img src="5254162027095660865_playGallery_logo_ID-1433468890saveToAlbum.jpg" alt="Anime Character 5">
+            <div class="desc">Karakter 5</div>
+        </div>
+
+        <div class="gallery-item">
+            <img src="5254162027095660865_playGallery_logo_ID-1288864432saveToAlbum.jpg" alt="Anime Character 6">
+            <div class="desc">Karakter 6</div>
+        </div>
+
+        <div class="gallery-item">
+            <img src="5254162027095660865_playGallery_logo_ID1248466278saveToAlbum.jpg" alt="Anime Character 7">
+            <div class="desc">Karakter 7</div>
+        </div>
+    </div>
+
+</body>
+</html>
