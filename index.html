@@ -3,118 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Foto Estetik Banu</title>
+    <title>Zeus 100x Jackpot - Banu Edition</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        body { background: #0b0e14; color: #fff; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; overflow: hidden; }
+        .game-container { background: #1a1a2e; padding: 20px; border-radius: 15px; border: 3px solid #f1c40f; box-shadow: 0 0 30px rgba(241, 196, 15, 0.3); width: 360px; position: relative; }
+        .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; background: #16213e; padding: 8px; border-radius: 8px; overflow: hidden; height: 340px; }
+        .cell { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: #0f3460; border-radius: 4px; }
+        
+        /* Animasi */
+        .exploding { animation: zoomOut 0.4s forwards; background: #f1c40f !important; }
+        @keyframes zoomOut { from { transform: scale(1); opacity: 1; } to { transform: scale(0); opacity: 0; } }
+        .falling { animation: slideDown 0.4s ease-out forwards; }
+        @keyframes slideDown { from { transform: translateY(-300px); } to { transform: translateY(0); } }
 
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        /* Multiplier & Jackpot Style */
+        .multiplier-cell { background: radial-gradient(circle, #f1c40f, #e67e22); color: #000; border: 1px solid #fff; font-weight: bold; font-size: 16px; }
+        
+        /* Teks Besar Menang */
+        #win-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: rgba(0, 0, 0, 0.9); color: #f1c40f; padding: 20px; border-radius: 20px;
+            border: 5px solid gold; text-align: center; z-index: 100; pointer-events: none;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); width: 80%;
         }
+        #win-overlay.show { transform: translate(-50%, -50%) scale(1); animation: glow 1s infinite alternate; }
+        @keyframes glow { from { box-shadow: 0 0 10px gold; } to { box-shadow: 0 0 30px gold; } }
 
-        .gallery-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-        }
-
-        .gallery-item {
-            background-color: #fff;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .gallery-item .desc {
-            padding: 15px;
-            text-align: center;
-            font-size: 14px;
-            color: #555;
-            background-color: #fff;
-            border-top: 1px solid #eee;
-        }
-
-        @media (min-width: 900px) {
-            .gallery-item:first-child {
-                grid-column: span 2;
-                grid-row: span 2;
-            }
-            .gallery-item:first-child img {
-                height: 620px;
-            }
-            .gallery-item:nth-child(7) {
-                grid-column: span 2;
-            }
-        }
+        .stats { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; font-weight: bold; color: #f1c40f; }
+        .counter { color: #00d4ff; font-size: 12px; }
+        .controls { display: flex; gap: 10px; margin-top: 15px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #btn-spin { background: #f1c40f; color: #000; }
+        #btn-auto { background: #e94560; color: #fff; }
     </style>
 </head>
 <body>
 
-    <h1>Koleksi Gambar Anime Banu</h1>
-
-    <div class="gallery-container">
-        <div class="gallery-item">
-            <img src="5254162027095660865_playGallery_logo_ID-1451717022saveToAlbum.jpg" alt="Anime Character 1">
-            <div class="desc">Karakter 1</div>
+    <h2 style="color:#f1c40f; text-shadow: 2px 2px #000;">⚡ ZEUS OFFLINE ⚡</h2>
+    
+    <div class="game-container">
+        <div id="win-overlay">
+            <h1 id="win-title">BIG WIN!</h1>
+            <div style="font-size: 30px; font-weight: bold;" id="win-amount">0</div>
         </div>
 
-        <div class="gallery-item">
-            <img src="5254162027095660865_playGallery_logo_ID-1957275647saveToAlbum.jpg" alt="Anime Character 2">
-            <div class="desc">Karakter 2</div>
+        <div class="stats">
+            <div style="display:flex; justify-content:space-between">
+                <span>Saldo: <span id="balance">10000</span></span>
+                <span>Win: <span id="total-win">0</span></span>
+            </div>
+            <div class="counter">Spin: <span id="spin-count">0</span> / 100</div>
         </div>
-
-        <div class="gallery-item">
-            <img src="5254162027095660865_playGallery_logo_ID-1302137012saveToAlbum.jpg" alt="Anime Character 3">
-            <div class="desc">Karakter 3</div>
-        </div>
-
-        <div class="gallery-item">
-            <img src="5254162027095660865_playGallery_logo_ID-946158397saveToAlbum.jpg" alt="Anime Character 4">
-            <div class="desc">Karakter 4</div>
-        </div>
-
-        <div class="gallery-item">
-            <img src="5254162027095660865_playGallery_logo_ID-1433468890saveToAlbum.jpg" alt="Anime Character 5">
-            <div class="desc">Karakter 5</div>
-        </div>
-
-        <div class="gallery-item">
-            <img src="5254162027095660865_playGallery_logo_ID-1288864432saveToAlbum.jpg" alt="Anime Character 6">
-            <div class="desc">Karakter 6</div>
-        </div>
-
-        <div class="gallery-item">
-            <img src="5254162027095660865_playGallery_logo_ID1248466278saveToAlbum.jpg" alt="Anime Character 7">
-            <div class="desc">Karakter 7</div>
+        
+        <div class="grid" id="grid"></div>
+        
+        <div id="status" style="margin-top:10px; height: 20px; font-size: 14px; text-align: center; color: #00d4ff;">Target: Spin ke-100</div>
+        
+        <div class="controls">
+            <button id="btn-spin" onclick="handleSpin()">SPIN</button>
+            <button id="btn-auto" onclick="toggleAuto()">AUTO: OFF</button>
         </div>
     </div>
 
+<script>
+    const symbols = ['👑', '💎', '🏺', '🍇', '🧿', '💍', '⌛'];
+    const multis = [2, 5, 10, 50, 100];
+    const ROWS = 5;
+    const COLS = 6;
+    let balance = 10000;
+    let spinCounter = 0;
+    let isSpinning = false;
+    let isAuto = false;
+    let gridData = Array(ROWS * COLS).fill('❓');
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(freq, type, duration) {
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+    }
+
+    function showWinOverlay(amount) {
+        const overlay = document.getElementById('win-overlay');
+        const amountEl = document.getElementById('win-amount');
+        const titleEl = document.getElementById('win-title');
+        
+        amountEl.innerText = amount;
+        titleEl.innerText = amount > 5000 ? "SENSATIONAL!" : "BIG WIN!";
+        overlay.classList.add('show');
+        
+        setTimeout(() => { overlay.classList.remove('show'); }, 3000);
+    }
+
+    function renderGrid(animatingIndices = []) {
+        const gridEl = document.getElementById('grid');
+        gridEl.innerHTML = '';
+        gridData.forEach((sym, i) => {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            if (animatingIndices.includes(i)) cell.classList.add('falling');
+            if (sym && sym.startsWith('x')) cell.classList.add('multiplier-cell');
+            cell.innerText = sym || '';
+            gridEl.appendChild(cell);
+        });
+    }
+
+    async function handleSpin() {
+        if (isSpinning || balance < 200) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        isSpinning = true;
+        balance -= 200;
+        spinCounter++;
+        
+        document.getElementById('balance').innerText = balance;
+        document.getElementById('spin-count').innerText = spinCounter;
+        document.getElementById('total-win').innerText = "0";
+
+        document.querySelectorAll('.cell').forEach(c => c.classList.add('exploding'));
+        await new Promise(r => setTimeout(r, 400));
+
+        // LOGIKA JACKPOT 100x
+        if (spinCounter % 100 === 0) {
+            playSound(600, 'square', 0.8);
+            const jackpotSym = symbols[Math.floor(Math.random() * symbols.length)];
+            gridData = gridData.map(() => jackpotSym);
+        } else {
+            gridData = gridData.map(() => generateSymbol());
+        }
+
+        renderGrid(Array.from({length: 30}, (_, i) => i));
+        await new Promise(r => setTimeout(r, 500));
+        await processTumbles();
+
+        isSpinning = false;
+        if (isAuto) setTimeout(handleSpin, 1500);
+    }
+
+    function generateSymbol() {
+        if(Math.random() < 0.05) return "x" + multis[Math.floor(Math.random() * multis.length)];
+        return symbols[Math.floor(Math.random() * symbols.length)];
+    }
+
+    async function processTumbles() {
+        let sessionWin = 0;
+        let combo = true;
+        let tumbleCount = 0;
+
+        while (combo) {
+            let counts = {};
+            gridData.forEach(s => { if(s && !s.startsWith('x')) counts[s] = (counts[s] || 0) + 1; });
+            let winners = Object.keys(counts).filter(s => counts[s] >= 8);
+
+            if (winners.length > 0) {
+                tumbleCount++;
+                playSound(300 + (tumbleCount * 50), 'triangle', 0.2);
+                let winThisTurn = 0;
+                winners.forEach(s => {
+                    winThisTurn += (counts[s] * 40);
+                    document.querySelectorAll('.cell').forEach((el, idx) => {
+                        if (gridData[idx] === s) el.classList.add('exploding');
+                    });
+                });
+
+                await new Promise(r => setTimeout(r, 500));
+                gridData = gridData.map(s => winners.includes(s) ? null : s);
+                const changedIndices = applyGravity();
+                sessionWin += winThisTurn;
+                document.getElementById('total-win').innerText = sessionWin;
+                renderGrid(changedIndices);
+                await new Promise(r => setTimeout(r, 500));
+            } else {
+                combo = false;
+                if (sessionWin > 0) {
+                    let totalX = 0;
+                    gridData.forEach(s => { if(s && s.startsWith('x')) totalX += parseInt(s.substring(1)); });
+                    if(totalX > 0) {
+                        sessionWin *= totalX;
+                        playSound(1200, 'sawtooth', 0.5);
+                    }
+                    balance += sessionWin;
+                    document.getElementById('balance').innerText = balance;
+                    if (sessionWin >= 1000) showWinOverlay(sessionWin);
+                }
+            }
+        }
+    }
+
+    function applyGravity() {
+        let changedIndices = [];
+        for (let c = 0; c < COLS; c++) {
+            let col = [];
+            for (let r = ROWS - 1; r >= 0; r--) {
+                if (gridData[r * COLS + c] !== null) col.push(gridData[r * COLS + c]);
+            }
+            let newCount = 0;
+            while (col.length < ROWS) {
+                col.push(generateSymbol());
+                newCount++;
+            }
+            for (let r = ROWS - 1; r >= 0; r--) {
+                let oldVal = gridData[r * COLS + c];
+                gridData[r * COLS + c] = col[ROWS - 1 - r];
+                if (oldVal === null || r < newCount) changedIndices.push(r * COLS + c);
+            }
+        }
+        return changedIndices;
+    }
+
+    function toggleAuto() {
+        isAuto = !isAuto;
+        document.getElementById('btn-auto').innerText = isAuto ? "AUTO: ON" : "AUTO: OFF";
+        if (isAuto && !isSpinning) handleSpin();
+    }
+
+    renderGrid();
+</script>
 </body>
 </html>
